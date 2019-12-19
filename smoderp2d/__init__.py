@@ -39,6 +39,11 @@ class Runner(object):
         elif os.getenv('GISRC'):
             from smoderp2d.providers.grass import GrassGisProvider
             provider_class = GrassGisProvider
+        elif os.getenv('NOGIS'):
+            # the environmental variable needs to be set: 
+            # export NOGIS='whatever'
+            from smoderp2d.providers.nogis import NoGISProvider
+            provider_class = NoGISProvider
         else:
             from smoderp2d.providers.cmd import CmdProvider
             provider_class = CmdProvider
