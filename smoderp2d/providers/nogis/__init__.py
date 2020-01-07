@@ -92,7 +92,6 @@ class NoGISProvider(BaseProvider):
         self._b = self._config.getfloat('sklon-hcrit','b')
         self._Ks = self._config.getfloat('sklon-hcrit','Ks')
         self._S = self._config.getfloat('sklon-hcrit','S')
-        self._ret = self._config.getfloat('sklon-hcrit','ret')
 
 
         # define storage writter
@@ -120,7 +119,7 @@ class NoGISProvider(BaseProvider):
 
             self._set_globals(data)
 
-            self._set_surface_retention()
+            self._set_surface_retention(data['mat_reten'])
             self._set_philips_to_glob()
             self._set_slope_to_glob() 
             self._set_optim_params_to_glob()
@@ -131,8 +130,19 @@ class NoGISProvider(BaseProvider):
 
 
 
-    def _set_surface_retention(self):
-        Globals.mat_reten.fill(self._ret)
+    def _set_surface_retention(self, mat_reten):
+        mu, sigma = 0.001, 0.0001 # mean and standard deviation
+        mat_reten = mat_reten.astype(float)
+        dim = mat_reten.shape
+        n = dim[0]
+        m = dim[1]
+        print (mat_reten)
+        for i in range(n):
+            for j in range(m):
+                mat_reten[i][j] = np.random.normal(mu, sigma, 1)
+        print (mat_reten)
+        raw_input()
+        Globals.mat_reten = -mat_reten
 
     def _set_philips_to_glob(self):
         """ read philip paramaters from hidden file """
