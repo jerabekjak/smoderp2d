@@ -85,13 +85,19 @@ class NoGISProvider(BaseProvider):
                 self.args.indata, e
             ))
 
-        self._sklon = self._config.getfloat('sklon-hcrit','sklon')
-        self._hcrit = self._config.getfloat('sklon-hcrit','hcrit')
-        self._X = self._config.getfloat('sklon-hcrit','X')
-        self._Y = self._config.getfloat('sklon-hcrit','Y')
-        self._b = self._config.getfloat('sklon-hcrit','b')
-        self._Ks = self._config.getfloat('sklon-hcrit','Ks')
-        self._S = self._config.getfloat('sklon-hcrit','S')
+        self._sklon = self._config.getfloat('params','sklon')
+        self._hcrit = self._config.getfloat('params','hcrit')
+        self._X = self._config.getfloat('params','X')
+        self._Y = self._config.getfloat('params','Y')
+        self._b = self._config.getfloat('params','b')
+        self._Ks = self._config.getfloat('params','Ks')
+        self._S = self._config.getfloat('params','S')
+
+        # TODO dej vse do globals
+        self._r = self._config.getfloat('matrices','r')
+        self._c = self._config.getfloat('matrices','c')
+        self._pixel_area = self._config.getfloat('matrices','pixel_area')
+
 
 
         # define storage writter
@@ -117,12 +123,54 @@ class NoGISProvider(BaseProvider):
                 self._config.get('Other', 'indata')
             )
 
+            # # TODO resize matice
+            # mat_b
+            # mat_n
+            # array_points # mozna ne
+            # mat_inf_index
+            # mat_fd
+            # mat_hcrit
+            # mat_ppl
+            # mat_aa
+            # mat_reten
+            # mat_nan
+            # mat_efect_cont
+            # mat_pi
+            # mat_slope
+            # mat_dem
+            # mat_boundary
+
+            # # TODO predelat podle aktualni velikosti
+            # rr
+            # vpix
+            # r
+            # pixel_area
+            # rc
+            # spix
+
+            # # TODO
+            # combinatIndex
+            # points
+
+            # # TODO coto ?
+            # poradi
+            # c
+
+            # # TODO i toto?
+            # yllcorner
+            # xllcorner
+
+            # print (data['mat_fd'])
+            # for key in data.keys(): 
+            #     print (key)
+
             self._set_globals(data)
 
-            self._set_surface_retention(data['mat_reten'])
             self._set_philips_to_glob()
             self._set_slope_to_glob() 
             self._set_optim_params_to_glob()
+            self._set_surface_retention(data['mat_reten'])
+
         else:
             raise ProviderError('Unsupported partial computing: {}'.format(
                 self.args.typecomp
