@@ -1,5 +1,6 @@
 import os
 import sys
+import math
 import argparse
 import logging
 import numpy as np
@@ -9,6 +10,7 @@ else:
     from ConfigParser import ConfigParser, NoSectionError
 
 from smoderp2d.core.general import Globals
+from smoderp2d.core.general import GridGlobals
 from smoderp2d.providers.base import BaseProvider, Logger, CompType, BaseWritter
 from smoderp2d.exceptions import ConfigError
 
@@ -94,8 +96,8 @@ class NoGISProvider(BaseProvider):
         self._S = self._config.getfloat('params','S')
 
         # TODO dej vse do globals
-        self._r = self._config.getfloat('matrices','r')
-        self._c = self._config.getfloat('matrices','c')
+        self._r = self._config.getint('matrices','r')
+        self._c = self._config.getint('matrices','c')
         self._pixel_area = self._config.getfloat('matrices','pixel_area')
 
 
@@ -164,17 +166,39 @@ class NoGISProvider(BaseProvider):
             # for key in data.keys(): 
             #     print (key)
 
+            # from base provider class call
             self._set_globals(data)
+            self._set_grid_globals()
 
-            self._set_philips_to_glob()
-            self._set_slope_to_glob() 
-            self._set_optim_params_to_glob()
-            self._set_surface_retention(data['mat_reten'])
+            # self._set_philips_to_glob()
+            # self._set_slope_to_glob() 
+            # self._set_optim_params_to_glob()
+            # self._set_surface_retention(data['mat_reten'])
 
         else:
             raise ProviderError('Unsupported partial computing: {}'.format(
                 self.args.typecomp
             ))
+
+
+    def _set_grid_globals(self):
+        r = self._r
+        c = self._c
+        pa = self._pixel_area
+        rr = (range(2,(r-1)))
+        rc = [[]]*r
+        for i in rr:
+            rc[i] = range(2,(c-1))
+        dx = math.sqrt(pa)
+        dy = dx
+
+        GridGlobals.r = r
+        GridGlobals.c = c
+        GridGlobals.rr = rr
+        GridGlobals.rc = rc
+        GridGlobals.pixel_area = pa
+        GridGlobals.dx = dx
+        GridGlobals.dy = dy
 
 
 
