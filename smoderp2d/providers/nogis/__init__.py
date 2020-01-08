@@ -94,6 +94,7 @@ class NoGISProvider(BaseProvider):
         self._b = self._config.getfloat('params','b')
         self._Ks = self._config.getfloat('params','Ks')
         self._S = self._config.getfloat('params','S')
+        self._ppl = self._config.getfloat('params','ppl')
 
         # TODO dej vse do globals
         self._r = self._config.getint('matrices','r')
