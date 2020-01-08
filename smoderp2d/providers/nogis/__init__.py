@@ -9,8 +9,7 @@ if sys.version_info.major >= 3:
 else:
     from ConfigParser import ConfigParser, NoSectionError
 
-from smoderp2d.core.general import Globals
-from smoderp2d.core.general import GridGlobals
+from smoderp2d.core.general import Globals, GridGlobals, DataGlobals
 from smoderp2d.providers.base import BaseProvider, Logger, CompType, BaseWritter
 from smoderp2d.exceptions import ConfigError
 
@@ -95,6 +94,9 @@ class NoGISProvider(BaseProvider):
         self._Ks = self._config.getfloat('params','Ks')
         self._S = self._config.getfloat('params','S')
         self._ppl = self._config.getfloat('params','ppl')
+        self._pi = self._config.getfloat('params','pi')
+        self._n = self._config.getfloat('params','n')
+
 
         # TODO dej vse do globals
         self._r = self._config.getint('matrices','r')
@@ -126,30 +128,6 @@ class NoGISProvider(BaseProvider):
                 self._config.get('Other', 'indata')
             )
 
-            # # TODO resize matice
-            # mat_b
-            # mat_n
-            # array_points # mozna ne
-            # mat_inf_index
-            # mat_fd
-            # mat_hcrit
-            # mat_ppl
-            # mat_aa
-            # mat_reten
-            # mat_nan
-            # mat_efect_cont
-            # mat_pi
-            # mat_slope
-            # mat_dem
-            # mat_boundary
-
-            # # TODO predelat podle aktualni velikosti
-            # rr
-            # vpix
-            # r
-            # pixel_area
-            # rc
-            # spix
 
             # # TODO
             # combinatIndex
@@ -170,11 +148,11 @@ class NoGISProvider(BaseProvider):
             # from base provider class call
             self._set_globals(data)
             self._set_grid_globals()
+            self._resize_matrices()
+            self._set_matrices()
 
-            # self._set_philips_to_glob()
-            # self._set_slope_to_glob() 
-            # self._set_optim_params_to_glob()
-            # self._set_surface_retention(data['mat_reten'])
+            self._set_philips_to_glob()
+            self._set_surface_retention()
 
         else:
             raise ProviderError('Unsupported partial computing: {}'.format(
@@ -183,6 +161,9 @@ class NoGISProvider(BaseProvider):
 
 
     def _set_grid_globals(self):
+        # # TODO co toto?
+        # vpix
+        # spix
         r = self._r
         c = self._c
         pa = self._pixel_area
@@ -201,20 +182,55 @@ class NoGISProvider(BaseProvider):
         GridGlobals.dx = dx
         GridGlobals.dy = dy
 
+    def _resize_matrices(self):
+        # TODO
+        # array_points mozna
+        r = self._r
+        c = self._c
+        
+        Globals.mat_b = np.full((r, c), np.nan)
+        Globals.mat_n = np.full((r, c), np.nan)
+        Globals.mat_inf_index = np.full((r, c), np.nan)
+        Globals.mat_fd = np.full((r, c), np.nan)
+        Globals.mat_hcrit = np.full((r, c), np.nan)
+        DataGlobals.mat_ppl = np.full((r, c), np.nan)
+        Globals.mat_aa = np.full((r, c), np.nan)
+        Globals.mat_reten = np.full((r, c), np.nan)
+        Globals.mat_nan = np.full((r, c), np.nan)
+        Globals.mat_efect_cont = np.full((r, c), np.nan)
+        Globals.mat_pi = np.full((r, c), np.nan)
+        Globals.mat_slope = np.full((r, c), np.nan)
+        Globals.mat_dem = np.full((r, c), np.nan)
+        Globals.mat_boundary = np.full((r, c), np.nan)
+
+    def _set_matrices(self):
+        
+        Globals.mat_slope.fill(self._sklon)
+        X = self._X
+        Y = self._Y
+        Globals.mat_aa = X*Globals.mat_slope**Y
+        Globals.mat_b.fill(self._b)
+        Globals.mat_n.fill(self._n)
+        Globals.mat_inf_index.fill(1)
+        Globals.mat_fd.fill(4)
+        Globals.mat_hcrit.fill(self._hcrit)
+        DataGlobals.mat_ppl.fill(self._ppl)
+        Globals.mat_nan.fill(np.nan)
+        Globals.mat_efect_cont.fill(GridGlobals.dx)
+        Globals.mat_pi.fill(self._pi)
+        # Globals.mat_dem = np.full((r, c), np.nan)
+        # Globals.mat_boundary = np.full((r, c), np.nan)
 
 
-    def _set_surface_retention(self, mat_reten):
+    def _set_surface_retention(self):
         mu, sigma = 0.001, 0.0001 # mean and standard deviation
-        mat_reten = mat_reten.astype(float)
+        mat_reten = Globals.mat_reten.astype(float)
         dim = mat_reten.shape
         n = dim[0]
         m = dim[1]
-        print (mat_reten)
         for i in range(n):
             for j in range(m):
                 mat_reten[i][j] = np.random.normal(mu, sigma, 1)
-        print (mat_reten)
-        raw_input()
         Globals.mat_reten = -mat_reten
 
     def _set_philips_to_glob(self):
@@ -226,17 +242,5 @@ class NoGISProvider(BaseProvider):
             l[1] = ks
             l[2] = s
 
-    def _set_slope_to_glob(self):
-        """ change surface slope in globals.mat_slope """
-        Globals.mat_slope.fill(self._sklon)
-
-    def _set_optim_params_to_glob(self):
-        """ change surface slope in globals.mat_aa a globals.mat_aa """
-        X = self._X
-        Y = self._Y
-        b = self._b
-
-        Globals.mat_aa = X*Globals.mat_slope**Y
-        Globals.mat_b.fill(b)
 
     
