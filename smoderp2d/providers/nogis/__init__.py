@@ -223,14 +223,14 @@ class NoGISProvider(BaseProvider):
 
 
     def _set_surface_retention(self):
-        mu, sigma = 0.001, 0.0001 # mean and standard deviation
+        mu, sigma = 0.025, 0.01 # mean and standard deviation
         mat_reten = Globals.mat_reten.astype(float)
         dim = mat_reten.shape
         n = dim[0]
         m = dim[1]
         for i in range(n):
             for j in range(m):
-                mat_reten[i][j] = np.random.normal(mu, sigma, 1)
+                mat_reten[i][j] = abs(np.random.normal(mu, sigma, 1))
         Globals.mat_reten = -mat_reten
 
     def _set_philips_to_glob(self):
