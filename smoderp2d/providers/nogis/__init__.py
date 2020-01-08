@@ -103,6 +103,8 @@ class NoGISProvider(BaseProvider):
         self._c = self._config.getint('matrices','c')
         self._pixel_area = self._config.getfloat('matrices','pixel_area')
 
+        self._sur_ret_mu = self._config.getfloat('reten','mu')
+        self._sur_ret_sigma = self._config.getfloat('reten','sigma')
 
 
         # define storage writter
@@ -223,7 +225,7 @@ class NoGISProvider(BaseProvider):
 
 
     def _set_surface_retention(self):
-        mu, sigma = 0.025, 0.01 # mean and standard deviation
+        mu, sigma = self._sur_ret_mu, self._sur_ret_sigma # mean and standard deviation
         mat_reten = Globals.mat_reten.astype(float)
         dim = mat_reten.shape
         n = dim[0]
