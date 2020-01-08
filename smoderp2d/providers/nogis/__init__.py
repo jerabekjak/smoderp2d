@@ -152,7 +152,7 @@ class NoGISProvider(BaseProvider):
             self._set_grid_globals()
             self._resize_matrices()
             self._set_matrices()
-
+            self._resize_array_points()
             self._set_philips_to_glob()
             self._set_surface_retention()
 
@@ -183,6 +183,15 @@ class NoGISProvider(BaseProvider):
         GridGlobals.pixel_area = pa
         GridGlobals.dx = dx
         GridGlobals.dy = dy
+
+    def _resize_array_points(self):
+        r = self._r
+        c = self._c
+        # ar - array_points
+        ap = np.zeros((c,5),float)
+        for i in range(c):
+            ap[i] = [i,r-2,i,0,0]
+        Globals.array_points = ap
 
     def _resize_matrices(self):
         # TODO
