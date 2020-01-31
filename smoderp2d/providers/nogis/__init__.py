@@ -99,13 +99,7 @@ class NoGISProvider(BaseProvider):
 
 
         # TODO dej vse do globals
-        self._r = self._config.getint('matrices','r')
-        self._c = self._config.getint('matrices','c')
-        self._pixel_area = self._config.getfloat('matrices','pixel_area')
-
-        self._sur_ret_mu = self._config.getfloat('reten','mu')
-        self._sur_ret_sigma = self._config.getfloat('reten','sigma')
-
+        self._reten_ascii = self._config.get('reten','path')
 
         # define storage writter
         self.storage = CmdWritter()
@@ -149,17 +143,27 @@ class NoGISProvider(BaseProvider):
 
             # from base provider class call
             self._set_globals(data)
+            self._read_reten_ascii()
             self._set_grid_globals()
             self._resize_matrices()
             self._set_matrices()
             self._resize_array_points()
             self._set_philips_to_glob()
-            self._set_surface_retention()
+#            self._set_surface_retention()
+            raw_input()
 
         else:
             raise ProviderError('Unsupported partial computing: {}'.format(
                 self.args.typecomp
             ))
+
+    def _read_reten_ascii(self):
+        print (self._reten_ascii)
+        f = open(self._reten_ascii, 'r')
+        lines = f.readlines()
+        self._r = int(lines[0].split()[1])
+        self._c = int(lines[1].split()[1])
+        self._pixel_area =  float(lines[4].split()[1])**2.0
 
 
     def _set_grid_globals(self):
