@@ -57,7 +57,7 @@ plot(h$V1/60/60,runoff*100*60*60, ylab = 'runoff [mm/h]', xlab = 'time [h]', cex
 asdf
 layout(matrix(c(1), ncol = 1))
 library('fields')
-r = t(as.matrix(read.table('../tests/data/output/prubeh/H000000000010_00.asc')))
+r = t(as.matrix(read.table('tests/data/output/prubeh/H000000000010_00.asc')))
 par(mar=c(1,1,1,4))
 image.plot(r, axes=F, main = 'surface retention [m]')
 r = t(as.matrix(read.table('../tests/data/output/prubeh/H000000003604_26.asc')))

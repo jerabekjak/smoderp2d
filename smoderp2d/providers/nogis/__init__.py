@@ -149,7 +149,7 @@ class NoGISProvider(BaseProvider):
             self._set_matrices()
             self._resize_array_points()
             self._set_philips_to_glob()
-#            self._set_surface_retention()
+            self._set_surface_retention()
             raw_input()
 
         else:
@@ -161,10 +161,10 @@ class NoGISProvider(BaseProvider):
         print (self._reten_ascii)
         f = open(self._reten_ascii, 'r')
         lines = f.readlines()
-        self._r = int(lines[0].split()[1])
-        self._c = int(lines[1].split()[1])
+        self._c = int(lines[0].split()[1])
+        self._r = int(lines[1].split()[1])
         self._pixel_area =  float(lines[4].split()[1])**2.0
-
+        self._reten_data = np.loadtxt(self._reten_ascii, skiprows=6)
 
     def _set_grid_globals(self):
         # # TODO co toto?
@@ -238,15 +238,12 @@ class NoGISProvider(BaseProvider):
 
 
     def _set_surface_retention(self):
-        mu, sigma = self._sur_ret_mu, self._sur_ret_sigma # mean and standard deviation
-        mat_reten = Globals.mat_reten.astype(float)
-        dim = mat_reten.shape
-        n = dim[0]
-        m = dim[1]
-        for i in range(n):
-            for j in range(m):
-                mat_reten[i][j] = abs(np.random.normal(mu, sigma, 1))
-        Globals.mat_reten = -mat_reten
+        if (self._reten_data.shape == Globals.mat_reten.shape):
+            Globals.mat_reten = self._reten_data
+        else:
+            raise ProviderError('{} and {} have different shape'.format(
+                Globals.mat_reten, self._reten_data
+            ))
 
     def _set_philips_to_glob(self):
         """ read philip paramaters from hidden file """
