@@ -7,6 +7,11 @@ ret = (r0 - r0fill)
 
 crop_ = crop(ret, mask)
 r0out = mask(crop_, mask)
-plot(r0out)
+r0outarg = raster::aggregate(r0out, fact = 5, fun = min)
+r0outargnozero = r0outarg
+values(r0outargnozero)[values(r0outargnozero) == 0] = NA
+plot(r0outargnozero)
+plot(r0outarg)
 
-writeRaster(x = r0out, filename = 'tests/data/reten.asc')
+
+writeRaster(x = r0outarg, filename = 'tests/data/reten.asc', overwrite = TRUE)

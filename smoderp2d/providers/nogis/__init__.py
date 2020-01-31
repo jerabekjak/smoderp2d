@@ -150,7 +150,6 @@ class NoGISProvider(BaseProvider):
             self._resize_array_points()
             self._set_philips_to_glob()
             self._set_surface_retention()
-            raw_input()
 
         else:
             raise ProviderError('Unsupported partial computing: {}'.format(
@@ -158,7 +157,6 @@ class NoGISProvider(BaseProvider):
             ))
 
     def _read_reten_ascii(self):
-        print (self._reten_ascii)
         f = open(self._reten_ascii, 'r')
         lines = f.readlines()
         self._c = int(lines[0].split()[1])

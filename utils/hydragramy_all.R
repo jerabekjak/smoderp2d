@@ -60,7 +60,7 @@ library('fields')
 r = t(as.matrix(read.table('tests/data/output/prubeh/H000000000010_00.asc')))
 par(mar=c(1,1,1,4))
 image.plot(r, axes=F, main = 'surface retention [m]')
-r = t(as.matrix(read.table('../tests/data/output/prubeh/H000000003604_26.asc')))
+r = t(as.matrix(read.table('tests/data/output/prubeh/H000000000900_32.asc')))
 image.plot(r, axes=F, main = 'surface retention [m]')
 
 # xx = c()
