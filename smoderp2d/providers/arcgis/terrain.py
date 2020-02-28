@@ -33,7 +33,7 @@ def compute_products(elev, save_dir, fldir=None):
 
     # compute surface retention
     try: 
-        sur_reten = arcpy.sa.Minus(dem, elev_fill)
+        sur_reten = arcpy.sa.Minus(elev, elev_fill)
         sur_reten.save(os.path.join(save_dir, 'temp', "reten"))
     except:
         raise ProviderError(
