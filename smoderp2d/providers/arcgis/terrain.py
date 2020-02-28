@@ -31,6 +31,16 @@ def compute_products(elev, save_dir, fldir=None):
                 sys.exc_info()[0]
             ))
 
+    # compute surface retention
+    try: 
+        sur_reten = arcpy.sa.Minus(dem, elev_fill)
+        sur_reten.save(os.path.join(save_dir, 'temp', "reten"))
+    except:
+        raise ProviderError(
+            "Unexpected error during surface retention calculation: {}".format(
+                sys.exc_info()[0]
+            ))
+
     # flow direction calculation
     try:
         if not fldir:
@@ -64,4 +74,4 @@ def compute_products(elev, save_dir, fldir=None):
                 sys.exc_info()[0]
             ))
 
-    return flow_direction, flow_accumulation, slope
+    return sur_reten, flow_direction, flow_accumulation, slope

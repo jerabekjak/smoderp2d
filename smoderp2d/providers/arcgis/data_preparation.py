@@ -122,6 +122,7 @@ class PrepareData(PrepareDataBase, ManageFields):
         
         :return: (filled elevation, flow direction, flow accumulation, slope)
         """
+        sur_reten, \
         flow_direction_clip, \
         flow_accumulation_clip, \
         slope_clip = compute_products(dem, self.data['outdir'])
@@ -129,7 +130,7 @@ class PrepareData(PrepareDataBase, ManageFields):
         # or has different nodatavalue compared to env nodatavalue. 
         slope_clip_desc = arcpy.Describe(slope_clip)
         self.data['NoDataValue'] = slope_clip_desc.nodatavalue
-        return flow_direction_clip, flow_accumulation_clip, slope_clip 
+        return sur_reten, flow_direction_clip, flow_accumulation_clip, slope_clip 
 
     def _get_intersect(self, dem, mask,
                         vegetation, soil, vegetation_type, soil_type,

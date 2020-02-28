@@ -71,7 +71,7 @@ class PrepareDataBase(object):
         Logger.info(
             "Computing fill, flow direction, flow accumulation, slope..."
         )
-        flow_direction_clip, flow_accumulation_clip, slope_clip = self._terrain_products(dem_clip)
+        sur_reten, flow_direction_clip, flow_accumulation_clip, slope_clip = self._terrain_products(dem_clip)
 
         # raster to numpy array conversion
         Logger.info("Computing parameters of DTM...")
@@ -117,7 +117,7 @@ class PrepareDataBase(object):
         self.data['mat_n'] = all_attrib[2]
         self.data['mat_pi'] = all_attrib[3]
         self.data['mat_ppl'] = all_attrib[4]
-        self.data['mat_reten'] = all_attrib[5]
+        self.data['mat_reten'] = self._rst2np(sur_reten)
         self.data['mat_b'] = all_attrib[6]
 
         self.data['mfda'] = False
