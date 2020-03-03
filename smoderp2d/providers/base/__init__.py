@@ -209,7 +209,10 @@ class BaseProvider(object):
                 setattr(DataGlobals, item, data[item])
 
         GridGlobals.NoDataInt = int(-9999)
-        Globals.mat_reten = -1.0 * data['mat_reten'] / 1000
+        # Globals.mat_reten = -1.0 * data['mat_reten'] / 1000
+        Globals.mat_reten = data['mat_reten']  # surface retention
+        #                                        is calculted
+        #                                        directly
         Globals.diffuse = self._comp_type(data['type_of_computing'])['diffuse']
         Globals.subflow = self._comp_type(data['type_of_computing'])['subflow']
         # TODO: 2 lines bellow are duplicated for arcgis provider. fist

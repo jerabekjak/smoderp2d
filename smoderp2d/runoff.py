@@ -130,9 +130,6 @@ class Runoff(object):
         stream and subsurface processes handling.
         """
         self.provider = provider
-        
-        # handling print of the solution in given times
-        self.times_prt = TimesPrt()
 
         # flow control
         self.flow_control = FlowControl()
@@ -208,6 +205,9 @@ class Runoff(object):
             0.0,
             True
         )
+        
+        # handling print of the solution in given times
+        self.times_prt = TimesPrt()
 
         Logger.info('-' * 80)
 
@@ -235,6 +235,8 @@ class Runoff(object):
         # saves time before the main loop
         Logger.info('Start of computing...')
         Logger.start_time = time.time()
+        print (self.flow_control.total_time)
+        self.times_prt.prt(self.flow_control.total_time, self.delta_t, self.surface)
 
         # main loop: until the end time
         i = j = 0 # TODO: rename vars (variable overlap)

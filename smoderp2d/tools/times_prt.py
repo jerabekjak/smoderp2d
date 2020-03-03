@@ -4,6 +4,7 @@ from smoderp2d.core.general import *
 from smoderp2d.providers import Logger
 
 from smoderp2d.core.general import Globals
+from smoderp2d.providers.cmd import CmdWritter
 
 
 class TimesPrt(object):
@@ -15,6 +16,7 @@ class TimesPrt(object):
         self.fTimes = open(Globals.prtTimes, 'r')
         self.outsubrid = 'prubeh'
         os.makedirs(os.path.join(Globals.outdir, self.outsubrid))
+        self.writer = CmdWritter().write_raster
 
         self.times = []
         self.__n = 0
@@ -39,24 +41,24 @@ class TimesPrt(object):
         if self.__n == len(self.times):
             return
 
-        if (time < self.times[self.__n]) and (self.times[self.__n] <= time + dt):
+        if (time <= self.times[self.__n]) and (self.times[self.__n] < time + dt):
 
             cas = '%015.2f' % (time + dt)
-            filen = os.path.join(Globals.outdir,
-                                 self.outsubrid,
-                                 'H' + str(cas).replace('.', '_') + '.asc')
-            Logger.info("Printing total H into file {}".format(filein))
-            tmp = np.zeros([Globals.r, Globals.c], float)
+            dirin = os.path.join(Globals.outdir,
+                                  self.outsubrid)
+            filein = 'r' + str(cas).replace('.', '_') + '.asc'
+            Logger.info("Printing total H into file {}/{}".format(dirin,filein))
+            tmp = np.zeros([GridGlobals.r, GridGlobals.c], float)
 
-            for i in Globalsobals.rr:
-                for j in Globals.rc[i]:
-                    tmp[i][j] = sur.arr[i][j].h_total_new
+            for i in GridGlobals.rr:
+                for j in GridGlobals.rc[i]:
+                    tmp[i][j] = sur.arr[i][j].sur_ret
 
-            make_ASC_raster(filen, tmp, Globals)
+            self.writer(tmp, filein, dirin)
 
             # pro pripat, ze v dt by bylo vice pozadovanych tisku, v takovem pripade udela jen jeden
             # a skoci prvni cas, ktery je mimo
-            while (time < self.times[self.__n]) and (self.times[self.__n] <= time + dt):
+            while (time <= self.times[self.__n]) and (self.times[self.__n] < time + dt):
                 self.__n += 1
                 if self.__n == len(self.times):
                     return
