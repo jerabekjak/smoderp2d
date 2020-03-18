@@ -15,7 +15,7 @@ from smoderp2d.core.surface import surface_retention
 
 infilt_capa = 0
 infilt_time = 0
-max_infilt_capa = 0.003  # [m]
+max_infilt_capa = 0.00  # [m]
 
 
 # Class manages the one time step operation
@@ -163,10 +163,6 @@ class TimeStep:
                 surBIL = surface.arr[i][j].h_total_pre + actRain + surface.arr[i][j].inflow_tm / pixel_area - (
                     surface.arr[i][j].vol_runoff / pixel_area + surface.arr[i][j].vol_runoff_rill / pixel_area)
 
-                #
-                # surface retention
-                #
-                surBIL = surface_retention(surBIL, surface.arr[i][j])
             
                 #
                 # infiltration
@@ -179,7 +175,12 @@ class TimeStep:
                         surface.arr[i][j].soil_type, surBIL)
                     surface.arr[i][j].infiltration = infiltration
 
+                #
                 # surface retention
+                #
+                surBIL = surface_retention(surBIL, surface.arr[i][j])
+
+                # surface exfiltration
                 surBIL += subsurface.get_exfiltration(i, j)
                     
                     
