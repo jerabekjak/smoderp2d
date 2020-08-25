@@ -38,27 +38,38 @@ class TimesPrt(object):
         if not self.fTimes:
             return
         
+        #Logger.info('-----------------debugLogger.info{}'.format(__file__))
+        #Logger.info('self.__n: {}'.format(self.__n))
+        #Logger.info('len(self.times): {}'.format(len(self.times)))
         if self.__n == len(self.times):
             return
 
-        if (time <= self.times[self.__n]) and (self.times[self.__n] < time + dt):
+        #Logger.info('time: {}'.format(time))
+        #Logger.info('self.times[self.__n]: {}'.format(self.times[self.__n]))
+        #Logger.info('time+dt: {}'.format(time+dt))
+        #Logger.info('end--------------debugLogger.info{}'.format(__file__))
+        if (time <= self.times[self.__n]) and (self.times[self.__n] < time+dt):
 
             cas = '%015.2f' % (time + dt)
             dirin = os.path.join(Globals.outdir,
                                   self.outsubrid)
-            filein = 'r' + str(cas).replace('.', '_') + '.asc'
+            filein = 'r' + str(cas).replace('.', '_') + 'reten'
+            filein_hnew = 'r' + str(cas).replace('.', '_') + 'h_new'
             Logger.info("Printing total H into file {}/{}".format(dirin,filein))
             tmp = np.zeros([GridGlobals.r, GridGlobals.c], float)
+            tmp_hnew = np.zeros([GridGlobals.r, GridGlobals.c], float)
 
             for i in GridGlobals.rr:
                 for j in GridGlobals.rc[i]:
                     tmp[i][j] = sur.arr[i][j].sur_ret
+                    tmp_hnew[i][j] = sur.arr[i][j].h_total_new
 
             self.writer(tmp, filein, dirin)
+            self.writer(tmp_hnew, filein_hnew, dirin)
 
             # pro pripat, ze v dt by bylo vice pozadovanych tisku, v takovem pripade udela jen jeden
             # a skoci prvni cas, ktery je mimo
-            while (time <= self.times[self.__n]) and (self.times[self.__n] < time + dt):
+            while (time <= self.times[self.__n]) and (self.times[self.__n] < time+dt):
                 self.__n += 1
                 if self.__n == len(self.times):
                     return
